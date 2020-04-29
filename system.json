@@ -1,10 +1,10 @@
 {
-  "name": "shadowrun5e",
-  "title": "Shadowrun 5th Edition",
-  "description": "Shadowrun 5th Edition game",
+  "name": "shadowrun5e-fr",
+  "title": "Shadowrun 5th Edition [FR]",
+  "description": "Shadowrun 5th Edition game [FR]",
   "version": "0.5.4",
   "templateVersion": "1.1",
-  "author": "n3rf_herder",
+  "author": "n3rf_herder/Dhaagz",
   "esmodules": ["shadowrun5e.js"],
   "scripts": [],
   "styles": ["css/main.css", "css/actor.css", "css/config.css", "css/item.css"],
@@ -24,7 +24,7 @@
   "gridDistance": 1,
   "gridUnits": "m",
   "socket": true,
-  "manifest": "https://raw.githubusercontent.com/smilligan93/SR5-FoundryVTT/master/system.json",
-  "url": "https://github.com/smilligan93/SR5-FoundryVTT",
-  "download": "https://github.com/smilligan93/SR5-FoundryVTT/archive/master.zip"
+  "manifest": "https://raw.githubusercontent.com/Dhaagz/SR5-FoundryVTT/french/system.json",
+  "url": "https://github.com/Dhaagz/SR5-FoundryVTT",
+  "download": "https://github.com/Dhaagz/SR5-FoundryVTT/archive/french.zip"
 }
