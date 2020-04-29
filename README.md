@@ -1,4 +1,4 @@
-# Shadowrun5e-FoundryVTT
+# shadowrun5e_fr-FoundryVTT
 
 Shadowrun 5e System for FoundryVTT.
 

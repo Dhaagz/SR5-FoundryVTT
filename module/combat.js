@@ -16,7 +16,7 @@ export const preCombatUpdate = async function(combat, changes, options) {
     if (game.user.isGM) {
       await shadowrunCombatUpdate(changes, options);
     } else {
-      game.socket.emit("system.shadowrun5e", {
+      game.socket.emit("system.shadowrun5e_fr", {
         gmCombatUpdate: {
           changes: changes,
           options: options
@@ -29,7 +29,7 @@ export const preCombatUpdate = async function(combat, changes, options) {
 export const shadowrunCombatUpdate = async (changes, options) => {
   const combat = game.combat;
   // subtact 10 from all initiative, we just went into the next initiative pass
-  const removedCombatants = combat.getFlag('shadowrun5e', 'removedCombatants') || [];
+  const removedCombatants = combat.getFlag('shadowrun5e_fr', 'removedCombatants') || [];
   const combatants = [];
   for (let c of combat.combatants) {
     let init = Number(c.initiative);
@@ -75,11 +75,11 @@ export const shadowrunCombatUpdate = async (changes, options) => {
     }
     await combat.createManyEmbeddedEntities('Combatant', removedCombatants, {});
     await ChatMessage.createMany(messages);
-    await combat.unsetFlag('shadowrun5e', 'removedCombatants');
+    await combat.unsetFlag('shadowrun5e_fr', 'removedCombatants');
     await combat.resetAll();
     await combat.rollAll();
     await combat.update({turn: 0});
   } else if (removedCombatants.length) {
-    await combat.setFlag('shadowrun5e', 'removedCombatants', removedCombatants);
+    await combat.setFlag('shadowrun5e_fr', 'removedCombatants', removedCombatants);
   }
 };

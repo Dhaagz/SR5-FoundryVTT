@@ -1,6 +1,7 @@
 import { SR5 } from '../config.js';
 import { Helpers } from '../helpers.js';
 import { ChummerImportForm } from '../apps/chummer-import-form.js';
+
 /**
  * Extend the basic ActorSheet with some very simple modifications
  */
@@ -30,7 +31,7 @@ export class SR5ActorSheet extends ActorSheet {
 	static get defaultOptions() {
 	  return mergeObject(super.defaultOptions, {
   	  classes: ["sr5", "sheet", "actor"],
-  	  template: "systems/shadowrun5e/templates/actor/character.html",
+  	  template: "systems/shadowrun5e_fr/templates/actor/character.html",
       width: 800,
       height: 690
     });
@@ -85,6 +86,9 @@ export class SR5ActorSheet extends ActorSheet {
     data.config = CONFIG.SR5;
     data.awakened = data.data.special === 'magic';
     data.emerged = data.data.special === 'resonance';
+
+    data.chummerimport_lang = data.data.chummerimport_lang;
+    console.log("Chummer import language : " + data.chummerimport_lang);
 
     return data;
   }

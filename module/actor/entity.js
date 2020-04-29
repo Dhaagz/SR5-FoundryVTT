@@ -369,7 +369,7 @@ export class SR5Actor extends Actor {
       fireMode: options.fireModeDefense,
       cover: options.cover
     };
-    let template = 'systems/shadowrun5e/templates/rolls/roll-defense.html';
+    let template = 'systems/shadowrun5e_fr/templates/rolls/roll-defense.html';
     let special = '';
     let cancel = true;
     return new Promise(resolve => {
@@ -404,7 +404,7 @@ export class SR5Actor extends Actor {
               count: count,
               title: 'Defense',
               after: async (roll) => {
-                this.unsetFlag('shadowrun5e', 'incomingAttack');
+                this.unsetFlag('shadowrun5e_fr', 'incomingAttack');
                 if (options.incomingAttack) {
                   let defenderHits = roll.total;
                   let attack = options.incomingAttack;
@@ -415,7 +415,7 @@ export class SR5Actor extends Actor {
                     let damageType = options.incomingAttack.damageType || '';
                     let ap = options.incomingAttack.ap;
                     // ui.notifications.info(`Got Hit: DV${damage}${damageType ? damageType.charAt(0).toUpperCase() : ''} ${ap}AP`);
-                    this.setFlag('shadowrun5e', 'incomingDamage', {
+                    this.setFlag('shadowrun5e_fr', 'incomingDamage', {
                       damage: damage,
                       ap: ap
                     });
@@ -438,7 +438,7 @@ export class SR5Actor extends Actor {
     };
     let id = '';
     let cancel = true;
-    let template = 'systems/shadowrun5e/templates/rolls/roll-soak.html';
+    let template = 'systems/shadowrun5e_fr/templates/rolls/roll-soak.html';
     return new Promise(resolve => {
       renderTemplate(template, dialogData).then(dlg => {
         new Dialog({
@@ -477,7 +477,7 @@ export class SR5Actor extends Actor {
             }
           },
           close: async (html) => {
-            this.unsetFlag('shadowrun5e', 'incomingDamage');
+            this.unsetFlag('shadowrun5e_fr', 'incomingDamage');
             if (cancel) return;
             const soak = this.data.data.rolls.soak[id];
             let count = soak;
@@ -587,7 +587,7 @@ export class SR5Actor extends Actor {
     };
     let spec = false;
     let cancel = true;
-    renderTemplate('systems/shadowrun5e/templates/rolls/matrix-roll.html', dialogData).then(dlg => {
+    renderTemplate('systems/shadowrun5e_fr/templates/rolls/matrix-roll.html', dialogData).then(dlg => {
       new Dialog({
         title: `${title} Test`,
         content: dlg,
@@ -669,7 +669,7 @@ export class SR5Actor extends Actor {
       limits: this.data.data.limits
     };
     let cancel = true;
-    renderTemplate('systems/shadowrun5e/templates/rolls/skill-roll.html', dialogData).then(dlg => {
+    renderTemplate('systems/shadowrun5e_fr/templates/rolls/skill-roll.html', dialogData).then(dlg => {
       new Dialog({
         title: `${title} Test`,
         content: dlg,
@@ -736,7 +736,7 @@ export class SR5Actor extends Actor {
     };
     let defaulting = false;
     let cancel = true;
-    renderTemplate('systems/shadowrun5e/templates/rolls/single-attribute.html', dialogData).then(dlg => {
+    renderTemplate('systems/shadowrun5e_fr/templates/rolls/single-attribute.html', dialogData).then(dlg => {
       new Dialog({
         title: `${title} Attribute Test`,
         content: dlg,

@@ -16,10 +16,10 @@ import * as chat from './module/chat.js';
 /* -------------------------------------------- */
 
 Hooks.once("init", function() {
-  console.log("Loading Shadowrun 5e System");
+  console.log("Loading Shadowrun 5e [FR] System");
 
   // Create a D&D5E namespace within the game global
-  game.shadowrun5e = {
+  game.shadowrun5e_fr = {
     SR5Actor,
     DiceSR,
     SR5Item,
@@ -32,9 +32,9 @@ Hooks.once("init", function() {
 
   // Register sheet application classes
   Actors.unregisterSheet("core", ActorSheet);
-  Actors.registerSheet("shadowrun5e", SR5ActorSheet, { makeDefault: true });
+  Actors.registerSheet("shadowrun5e_fr", SR5ActorSheet, { makeDefault: true });
   Items.unregisterSheet("core", ItemSheet);
-  Items.registerSheet("shadowrun5e", SR5ItemSheet, { makeDefault: true});
+  Items.registerSheet("shadowrun5e_fr", SR5ItemSheet, { makeDefault: true});
 
   ['renderSR5ActorSheet', 'renderSR5ItemSheet'].forEach(s => {
     Hooks.on(s, (app, html, data) => Helpers.setupCustomCheckbox(app, html, data));
@@ -50,7 +50,7 @@ Hooks.on('canvasInit', function() {
 });
 
 Hooks.on('ready', () => {
-  game.socket.on("system.shadowrun5e", data => {
+  game.socket.on("system.shadowrun5e_fr", data => {
     if (game.user.isGM && data.gmCombatUpdate) {
       shadowrunCombatUpdate(
         data.gmCombatUpdate.changes,
@@ -85,7 +85,7 @@ Hooks.on("hotbarDrop", (bar, data, slot) => {
  * @returns {Promise}
  */
 async function createItemMacro(item, slot) {
-  const command = `game.shadowrun5e.rollItemMacro("${item.name}");`;
+  const command = `game.shadowrun5e_fr.rollItemMacro("${item.name}");`;
   let macro = game.macros.entities.find(m => (m.name === item.name) && (m.command === command));
   if ( !macro ) {
     macro = await Macro.create({
@@ -93,7 +93,7 @@ async function createItemMacro(item, slot) {
       type: "script",
       img: item.img,
       command: command,
-      flags: {"shadowrun5e.itemMacro": true}
+      flags: {"shadowrun5e_fr.itemMacro": true}
     }, {displaySheet: false});
   }
   game.user.assignHotbarMacro(macro, slot);

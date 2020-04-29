@@ -100,7 +100,7 @@ export class SR5Item extends Item {
     };
 
     const templateType = 'item';
-    const template = `systems/shadowrun5e/templates/rolls/${templateType}-card.html`;
+    const template = `systems/shadowrun5e_fr/templates/rolls/${templateType}-card.html`;
     const html = await renderTemplate(template, templateData);
 
     const chatData = {
@@ -394,13 +394,13 @@ export class SR5Item extends Item {
     const itemData = this.data.data;
     let options = {event: ev};
 
-    if (this.getFlag('shadowrun5e', 'attack')) {
-      options.incomingAttack = this.getFlag('shadowrun5e', 'attack');
+    if (this.getFlag('shadowrun5e_fr', 'attack')) {
+      options.incomingAttack = this.getFlag('shadowrun5e_fr', 'attack');
       if (options.incomingAttack.fireMode) options.fireModeDefense = Helpers.mapRoundsToDefenseMod(options.incomingAttack.fireMode);
       options.cover = true;
     }
 
-    options.incomingAction = this.getFlag('shadowrun5e', 'action');
+    options.incomingAction = this.getFlag('shadowrun5e_fr', 'action');
 
     const opposed = itemData.action.opposed;
     if (opposed.type === 'defense') target.rollDefense(options);
@@ -434,7 +434,7 @@ export class SR5Item extends Item {
     let title = this.data.name;
 
     if (this.data.type === 'weapon' && itemData.category === 'range') {
-      let attack = this.getFlag('shadowrun5e', 'attack') || {fireMode: 0};
+      let attack = this.getFlag('shadowrun5e_fr', 'attack') || {fireMode: 0};
       let fireMode = attack.fireMode;
       let rc = parseInt(itemData.range.rc.value) + parseInt(actorData.recoil_compensation);
       let dialogData = {
@@ -443,7 +443,7 @@ export class SR5Item extends Item {
         rc: rc,
         ammo: itemData.range.ammo
       };
-      return renderTemplate('systems/shadowrun5e/templates/rolls/range-weapon-roll.html', dialogData).then(dlg => {
+      return renderTemplate('systems/shadowrun5e_fr/templates/rolls/range-weapon-roll.html', dialogData).then(dlg => {
         const buttons = {};
         let ranges = itemData.range.ranges;
         let environmental = true;
@@ -490,7 +490,7 @@ export class SR5Item extends Item {
                 const ammo = dupData.data.range.ammo;
                 let ammoValue = Math.max(0, ammo.value - fireMode);
                 await this.update({"data.range.ammo.value": ammoValue});
-                this.setFlag('shadowrun5e', 'attack', {
+                this.setFlag('shadowrun5e_fr', 'attack', {
                   hits: roll.total,
                   fireMode: fireMode,
                   damageType: dupData.data.action.damage.type,
@@ -510,7 +510,7 @@ export class SR5Item extends Item {
       };
       let reckless = false;
       let cancel = true;
-      renderTemplate('systems/shadowrun5e/templates/rolls/roll-spell.html', dialogData).then(dlg => {
+      renderTemplate('systems/shadowrun5e_fr/templates/rolls/roll-spell.html', dialogData).then(dlg => {
         new Dialog({
           title: `${Helpers.label(this.data.name)} Force`,
           content: dlg,
@@ -540,7 +540,7 @@ export class SR5Item extends Item {
                 if (this.data.data.category === 'combat') {
                   let damage = force;
                   let ap = -force;
-                  this.setFlag('shadowrun5e', 'attack', {
+                  this.setFlag('shadowrun5e_fr', 'attack', {
                     hits: roll.total,
                     damageType: this.data.data.action.damage.type,
                     element: this.data.data.action.damage.element,
@@ -561,7 +561,7 @@ export class SR5Item extends Item {
         level: 2 - itemData.fade
       };
       let cancel = true;
-      renderTemplate('systems/shadowrun5e/templates/rolls/roll-complex-form.html', dialogData).then(dlg => {
+      renderTemplate('systems/shadowrun5e_fr/templates/rolls/roll-complex-form.html', dialogData).then(dlg => {
         new Dialog({
           title: `${Helpers.label(this.data.name)} Level`,
           content: dlg,
@@ -600,7 +600,7 @@ export class SR5Item extends Item {
         limit: limit,
         title: title,
         after: async (roll) => {
-          this.setFlag('shadowrun5e', 'action', {
+          this.setFlag('shadowrun5e_fr', 'action', {
             hits: roll.total
           });
         }

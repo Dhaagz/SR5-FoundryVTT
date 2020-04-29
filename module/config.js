@@ -35,6 +35,11 @@ SR5.specialTypes = {
   "resonance": "SR5.Emerged"
 };
 
+SR5.chummerImportLanguages = {
+  "eng": "SR5.Lang.English",
+  "fr": "SR5.Lang.French",
+}
+
 SR5.damageTypes = {
   "physical": "SR5.DmgTypePhysical",
   "stun": "SR5.DmgTypeStun",

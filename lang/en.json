@@ -187,6 +187,8 @@
   "SR5.MatrixAttrSleaze": "Sleaze",
   "SR5.MatrixAttrDataProc": "Data Proc.",
   "SR5.MatrixAttrFirewall": "Firewall",
+  "SR5.Lang.English": "English",
+  "SR5.Lang.French": "French",
   "SR5.LimitPhysical": "Physical",
   "SR5.LimitSocial": "Social",
   "SR5.LimitMental": "Mental",

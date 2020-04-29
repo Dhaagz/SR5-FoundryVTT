@@ -2,9 +2,9 @@ export class ChummerImportForm extends FormApplication {
   static get defaultOptions() {
     const options = super.defaultOptions;
     options.id = 'chummer-import';
-    options.classes = ['shadowrun5e'];
+    options.classes = ['shadowrun5e_fr'];
     options.title = 'Chummer/Hero Lab Import';
-    options.template = 'systems/shadowrun5e/templates/apps/import.html';
+    options.template = 'systems/shadowrun5e_fr/templates/apps/import.html';
     options.width = 600;
     options.height = "auto";
     return options;
@@ -17,10 +17,131 @@ export class ChummerImportForm extends FormApplication {
   }
 
   activateListeners(html) {
+
+    /**
+     * Translate item name according to locale if possible
+     * @param item
+     * @returns {{name}|*}
+     */
+    function translateItem(item) {
+      const item_name_eng = item.name;
+
+      const itemNameFormatted = item.name.replace(/-/g, " ").replace(/[\[\]()\/:"\s«»]/g, "_");
+      item.name = game.i18n.localize(`CHUMMER.${item.type}.${itemNameFormatted}`);
+      if (item.name && item.name.includes("CHUMMER")) {
+        // No translation defined, use default name (ENG)
+        item.name = item_name_eng;
+      }
+
+      return item;
+    }
+
+    /**
+     * Replace basic imported item with item of the same name in library if present
+     * @param item
+     * @returns {*}
+     */
+    function replaceItemWithLibraryItem(item) {
+      const libraryItem = game.data.items.filter(i => i.name === item.name);
+      item = libraryItem.length !== 0 ? libraryItem[0] : item;
+
+      return item;
+    }
+
+    /**
+     * Computes detailled contact description
+     * @param ctc
+     * @returns {string}
+     */
+    function describeContact(ctc){
+      let desc = "";
+      // Print left/right location if available
+      let contactType = ctc.contacttype;
+      let sex = ctc.sex;
+      let role = ctc.role;
+      let metatype = ctc.metatype;
+      let age = ctc.age;
+      let personalLife = ctc.personallife;
+      let preferredPayment = ctc.prefferedpayment;
+      let hobbiesVice = ctc.hobbiesvice;
+
+      if(contactType){
+        desc += `<p>${contactType}</p><hr>`;
+      }
+
+      desc += "<ul>";
+      if(sex){
+        desc += `<li><b>Sexe</b> : ${sex}</li>`;
+      }
+      if(role){
+        desc += `<li><b>Rôle</b> : ${role}</li>`;
+      }
+      if(metatype){
+        desc += `<li><b>Métatype</b> : ${metatype}</li>`;
+      }
+      if(age){
+        desc += `<li><b>Âge</b> : ${age}</li>`;
+      }
+      if(personalLife){
+        desc += `<li><b>Vie Perso</b> : ${personalLife}</li>`;
+      }
+      if(preferredPayment){
+        desc += `<li><b>Mode de paiement préféré</b> : ${preferredPayment}</li>`;
+      }
+      if(hobbiesVice){
+        desc += `<li><b>Vice/Hobbies</b> : ${hobbiesVice}</li>`;
+      }
+      desc += "</ul>";
+
+      return desc;
+    }
+
+    /**
+     * Computes simple cyberware description by looping through children
+     * @param cy
+     * @returns {string}
+     */
+    function describeCyberware(cy){
+      let desc = "";
+      // Print left/right location if available
+      let location = cy.location;
+      let extra = cy.extra;
+      let grade = cy.grade;
+      if(location){
+        let locDesc = location === "Right" ? "Droite" : "Gauche";
+        desc += `<p>${locDesc}</p><hr>`;
+      }
+      if(extra){
+        desc += `<p><b>${extra}</b></p>`;
+      }
+      if(grade){
+        desc += `<p>${cy.grade}</p>`;
+      }
+      if(cy.children && cy.children.cyberware) {
+        desc += "<ul>";
+        cy.children.cyberware.forEach(c => {
+          if(c.name) {
+            desc += `<li>${c.name}`;
+            if(c.rating && c.rating > 0){
+              desc += ` (Indice ${c.rating})`;
+            }
+            if(c.extra) {
+              desc += ` - ${c.extra}`
+            }
+            desc += "</li>";
+          }
+        });
+        desc += "</ul>";
+      }
+
+
+      return desc;
+    }
+
     html.find('.submit-chummer-import').click(async event => {
       event.preventDefault();
       let chummerfile = JSON.parse($('.chummer-text').val());
-      const weapons = $('.weapons').is(':checked');
+      const weapons = $('.weapons').is(':checked');1
       const armor = $('.armor').is(':checked');
       const cyberware = $('.cyberware').is(':checked');
       const equipment = $('.gear').is(':checked');
@@ -54,7 +175,7 @@ export class ChummerImportForm extends FormApplication {
         } else if (att.toLowerCase() === "res") {
           return 'resonance';
         }
-      }
+      };
 
       const parseDamage = (val) => {
         const damage = {
@@ -82,7 +203,7 @@ export class ChummerImportForm extends FormApplication {
       const getValues = (val) => {
 		let l = val.match(/([0-9]+)(?:([0-9]+))*/g);
         return l || ['0'];
-      }
+      };
 
 	  const getValInParen = (value) => {
 		// regex to capture value inside () or single number
@@ -95,7 +216,7 @@ export class ChummerImportForm extends FormApplication {
 	  };
 	  const getArray = (value) => {
         return Array.isArray(value) ? value : [value];
-      }
+      };
       const updateData = duplicate(this.object.data);
       const update = updateData.data;
       const items = [];
@@ -161,10 +282,15 @@ export class ChummerImportForm extends FormApplication {
             });
           }
           if (c.totaless) {
-            update.attributes.essence.value = c.totaless;
+            if(c.totaless.includes(',')) {
+              update.attributes.essence.value = parseFloat(c.totaless.replace(/,/, "."));
+            }
+            else {
+              update.attributes.essence.value = c.totaless;
+            }
           }
           if (c.nuyen) {
-            update.nuyen = parseInt(c.nuyen.replace(',',''));
+            update.nuyen = parseInt(c.nuyen.replace(/[,\s]/g, ''));
           }
         } catch (e) {
             error += "Error with character info: " + e + ". ";
@@ -173,8 +299,10 @@ export class ChummerImportForm extends FormApplication {
         let atts = chummerfile.characters.character.attributes[1].attribute;
         atts.forEach(att => {
           try {
-            const newAtt = parseAtt(att.name);
-            if (newAtt) update.attributes[newAtt].base = parseInt(att.total);
+            const newAtt = parseAtt(att.name_english);
+            if (newAtt){
+              update.attributes[newAtt].base = parseInt(att.total);
+            }
 
           } catch (e) {
               error += "Error with attributes: " + e + ". ";
@@ -214,9 +342,15 @@ export class ChummerImportForm extends FormApplication {
                 }
                 group = "knowledge";
               } else {
-                let name = s.name.toLowerCase().trim().replace(/\s/g, '_').replace(/-/g, '_');
-                if (name.includes('exotic') && name.includes('_weapon')) name = name.replace('_weapon', '');
-                skill = update.skills.active[name];
+                // FIXME dirty hack to get english skill from translated name
+                // Get key, e.g "SkillBlades"
+                let sr5Translations = game.i18n.translations.SR5;
+                let skillKey = Object.keys(sr5Translations).find(key => sr5Translations[key] === s.name);
+                // Turn it into blades
+                let englishSkillName = skillKey.substring(5).toLowerCase();
+                // Find related key in actor skills (template.json)
+                let actorSkillKey = Object.keys(update.skills.active).find(key => key.replace(/_/sg, "")  === englishSkillName);
+                skill = update.skills.active[actorSkillKey];
               }
               if (!skill) console.error("Couldn't parse skill " + s.name);
               if (skill) {
@@ -306,16 +440,16 @@ export class ChummerImportForm extends FormApplication {
                   }
                 }
                 if (w.clips != null && w.clips.clip != null) { // HeroLab export doesn't have clips
-                  let clips = Array.isArray(w.clips.clip) ? w.clips.clip : [ w.clips.clip ];
+                  let clips = Array.isArray(w.clips.clip) ? w.clips.clip : [w.clips.clip];
                   clips.forEach(clip => {
                     console.log(clip);
                   });
                 }
                 if (w.ranges
-                  && w.ranges.short
-                  && w.ranges.medium
-                  && w.ranges.long
-                  && w.ranges.extreme) {
+                    && w.ranges.short
+                    && w.ranges.medium
+                    && w.ranges.long
+                    && w.ranges.extreme) {
                   console.log(w.ranges);
                   range.ranges = {
                     short: parseInt(w.ranges.short.split('-')[1]),
@@ -353,7 +487,12 @@ export class ChummerImportForm extends FormApplication {
                 }
               }
 
-              const itemData = { name: w.name, type: 'weapon', data: data };
+              let itemData = {name: w.name, type: 'weapon', data: data};
+              // Attempt to translate item name
+              if (game.i18n.lang === "fr") {
+                itemData = translateItem(itemData);
+                itemData = replaceItemWithLibraryItem(itemData);
+              }
               items.push(itemData);
             } catch (e) {
                 console.error(e);
@@ -429,12 +568,13 @@ export class ChummerImportForm extends FormApplication {
               const data = {};
               data.description = {
                 rating: cy.rating,
-                value: cy.description
+                value: describeCyberware(cy)
               };
               data.technology = {
+                rating: cy.rating ? cy.rating : 1,
                 equipped: true
               };
-              data.essence = cy.ess;
+              data.essence = parseFloat(cy.ess.replace(/,/, "."));
               data.grade = cy.grade;
               const itemData = { name: cy.name, type: 'cyberware', data: data };
               items.push(itemData);
@@ -450,7 +590,7 @@ export class ChummerImportForm extends FormApplication {
             const data = {};
             if (p.description) data.description = {
               value: TextEditor.enrichHTML(p.description)
-            }
+            };
             data.level = parseInt(p.rating);
             p.pp = parseInt(p.totalpoints);
 
@@ -464,17 +604,28 @@ export class ChummerImportForm extends FormApplication {
           let licenses = [];
           gears.forEach(g => {
             try {
+              let gType = 'equipment';
               const data = {};
               let name = g.name;
               if (g.extra) name += ` (${g.extra})`;
-              data.technology = {
-                rating: g.rating,
-                quantity: g.qty
-              };
+              if(g.iscommlink && (g.iscommlink.toLowerCase() === "true")) {
+                //gType = 'device';
+                // TODO Add proper device (non-trivial)
+                data.technology = {
+                  rating: parseInt(g.devicerating) || 1,
+                  quantity: g.qty
+                };
+              }
+              else {
+                data.technology = {
+                  rating: g.rating,
+                  quantity: g.qty
+                };
+              }
               data.description = {
                 value: g.description
               };
-              const itemData = { name: name, type: 'equipment', data: data };
+              const itemData = { name: name, type: gType, data: data };
               items.push(itemData);
             } catch (e) {
               console.error(e);
@@ -611,11 +762,28 @@ export class ChummerImportForm extends FormApplication {
             }
           });
         }
-      };
+
+        // BIO/SIN/Contacts
+        //TODO Make import tickable
+        if(c.contacts && c.contacts.contact) {
+          let contacts = getArray(c.contacts.contact);
+          contacts.forEach(ctc => {
+            let data = {};
+            data.type = ctc.contacttype || "";
+            data.connection = ctc.connection || 1;
+            data.loyalty = ctc.loyalty || 1;
+            data.description = { value : describeContact(ctc) };
+            const itemData = { name: ctc.name, type: 'contact', data: data};
+            items.push(itemData);
+          })
+        }
+        // TODO SINs & Lifestyles
+
+      }
       await this.object.update(updateData);
       await this.object.createManyEmbeddedEntities("OwnedItem", items);
       ui.notifications.info('Complete! Check everything. Notably: Ranged weapon mods and ammo; Strength based weapon damage; Specializations on all spells, powers, and weapons;');
       this.close();
     });
   }
-};
+}

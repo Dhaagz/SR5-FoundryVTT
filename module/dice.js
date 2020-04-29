@@ -33,7 +33,7 @@ export class DiceSR {
       const hits = roll.total;
       const fails = roll.dice[0].rolls.reduce((fails, r) => (r.roll === 1) ? fails + 1 : fails, 0);
 
-      const template = 'systems/shadowrun5e/templates/rolls/roll-card.html';
+      const template = 'systems/shadowrun5e_fr/templates/rolls/roll-card.html';
       const templateData = {
         actor: actor,
         hits: roll.total,
@@ -100,7 +100,7 @@ export class DiceSR {
       limitMod: limitMod || "",
       wounds: wounds
     };
-    let template = 'systems/shadowrun5e/templates/rolls/roll-dialog.html';
+    let template = 'systems/shadowrun5e_fr/templates/rolls/roll-dialog.html';
     let edge = false;
     let cancel = true;
     return new Promise(resolve => {

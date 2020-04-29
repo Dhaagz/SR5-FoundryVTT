@@ -23,7 +23,7 @@ export class SR5ItemSheet extends ItemSheet {
   }
 
   get template() {
-    const path = 'systems/shadowrun5e/templates/item/';
+    const path = 'systems/shadowrun5e_fr/templates/item/';
     return `${path}${this.item.data.type}.html`;
   }
 
