@@ -609,8 +609,8 @@ export class ChummerImportForm extends FormApplication {
               let name = g.name;
               if (g.extra) name += ` (${g.extra})`;
               if(g.iscommlink && (g.iscommlink.toLowerCase() === "true")) {
-                //gType = 'device';
-                // TODO Add proper device (non-trivial)
+                gType = 'device';
+                // TODO Add proper device
                 data.technology = {
                   rating: parseInt(g.devicerating) || 1,
                   quantity: g.qty

@@ -17,7 +17,6 @@ export class SR5ActorSheet extends ActorSheet {
      * Keep track of the currently active sheet tab
      * @type {string}
      */
-    this._sheetTab = "skills";
     this._shownUntrainedSkills = [];
     this._shownDesc = [];
   }
@@ -33,7 +32,8 @@ export class SR5ActorSheet extends ActorSheet {
   	  classes: ["sr5", "sheet", "actor"],
   	  template: "systems/shadowrun5e_fr/templates/actor/character.html",
       width: 800,
-      height: 690
+      height: 690,
+        tabs: [{navSelector: '.tabs', contentSelector: '.sheetbody', initial: 'skills'}]
     });
   }
 
@@ -244,12 +244,12 @@ export class SR5ActorSheet extends ActorSheet {
     super.activateListeners(html);
 
     // Activate tabs
-    let tabs = html.find('.tabs').filter('nav[data-group=primary]');
-    let initial = this._sheetTab;
-    new Tabs(tabs, {
-      initial: initial,
-      callback: clicked => this._sheetTab = clicked.data("tab")
-    });
+    // let tabs = html.find('.tabs').filter('nav[data-group=primary]');
+    // let initial = this._sheetTab;
+    // new Tabs(tabs, {
+    //   initial: initial,
+    //   callback: clicked => this._sheetTab = clicked.data("tab")
+    // });
 
     html.find('.hidden').hide();
     this._shownUntrainedSkills.forEach(cat => {
