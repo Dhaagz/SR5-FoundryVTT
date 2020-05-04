@@ -145,7 +145,7 @@ export class SR5Actor extends Actor {
     for (let [label, skill] of Object.entries(data.skills.active)) {
       if (!skill.hidden) {
         if (!skill.mod) skill.mod = 0;
-        skill.value = skill.base + skill.mod;
+        skill.value = Math.max(0, skill.base + skill.mod);
       }
     }
     for (let skill of data.skills.language.value) {

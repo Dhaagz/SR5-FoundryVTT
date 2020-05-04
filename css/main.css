@@ -704,6 +704,12 @@ select.display > option {
 .sr5 .inventory .item .item-text.dropoff {
   width: 4em;
 }
+.sr5 .inventory .item .item-text.base {
+  width: 2em;
+}
+.sr5 .inventory .item .item-text.mod {
+  width: 2em;
+}
 .sr5 .inventory .item .item-text.rtg {
   width: 3em;
 }

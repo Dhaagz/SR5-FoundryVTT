@@ -27,6 +27,8 @@
   "SR5.Attribute": "Attribute",
   "SR5.Limit": "Limit",
   "SR5.Modifier": "Modifier",
+  "SR5.Base": "Base",
+  "SR5.Mod": "Mod",
   "SR5.Wounds": "Wounds",
 
   "SR5.Movement": "Movement",

@@ -57,6 +57,12 @@
           <div class="item-text skill-item">
             {{localize "SR5.Specializations"}}
           </div>
+          <div class="item-text base">
+            {{localize "SR5.Base"}}
+          </div>
+          <div class="item-text mod">
+            {{localize "SR5.Mod"}}
+          </div>
           <div class="item-text rtg">
             {{localize "SR5.Rtg"}}
           </div>
@@ -74,17 +80,36 @@
             <div class="item-text skill-item">
               <input
                 class="display text"
-                type="text"
+                type="text"t
                 value="{{skill.specs}}"
                 name="data.skills.active.{{sid}}.specs" />
+            </div>
+            <div class="item-text base">
+              <input
+                      class="display"
+                      type="text"
+                      value="{{skill.base}}"
+                      name="data.skills.active.{{sid}}.base"
+                      placeholder="0"
+                      data-dtype="Number"/>
+            </div>
+            <div class="item-text mod">
+              <input
+                      class="display"
+                      type="text"
+                      value="{{skill.mod}}"
+                      name="data.skills.active.{{sid}}.mod"
+                      placeholder="0"
+                      data-dtype="Number"/>
             </div>
             <div class="item-text rtg">
               <input
                 class="display"
                 type="text"
                 value="{{skill.value}}"
-                name="data.skills.active.{{sid}}.base"
+                name="data.skills.active.{{sid}}.value"
                 placeholder="0"
+                disabled
                 data-dtype="Number"/>
             </div>
           </div>
