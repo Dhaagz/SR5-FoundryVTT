@@ -615,6 +615,29 @@ export class ChummerImportForm extends FormApplication {
                   rating: parseInt(g.devicerating) || 1,
                   quantity: g.qty
                 };
+
+                if(g.category_english === "Cyberdecks") {
+                  data.category = "cyberdeck";
+
+                  data.atts = {
+                    "att1": {
+                      "value": parseInt(g.attack) || 1,
+                          "att": "attack"
+                    },
+                    "att2": {
+                      "value": parseInt(g.sleaze) || 1,
+                          "att": "sleaze"
+                    },
+                    "att3": {
+                      "value": parseInt(g.dataprocessing) || 1,
+                          "att": "data_processing"
+                    },
+                    "att4": {
+                      "value": parseInt(g.firewall) || 1,
+                          "att": "firewall"
+                    }
+                  };
+                }
               }
               else {
                 data.technology = {
