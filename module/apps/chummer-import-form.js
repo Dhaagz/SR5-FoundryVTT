@@ -148,6 +148,7 @@ export class ChummerImportForm extends FormApplication {
       const qualities = $('.qualities').is(':checked');
       const powers = $('.powers').is(':checked');
       const spells = $('.spells').is(':checked');
+      const bio = $('.bio').is(':checked');
 
       console.log(chummerfile);
 
@@ -610,7 +611,6 @@ export class ChummerImportForm extends FormApplication {
               if (g.extra) name += ` (${g.extra})`;
               if(g.iscommlink && (g.iscommlink.toLowerCase() === "true")) {
                 gType = 'device';
-                // TODO Add proper device
                 data.technology = {
                   rating: parseInt(g.devicerating) || 1,
                   quantity: g.qty
@@ -787,20 +787,22 @@ export class ChummerImportForm extends FormApplication {
         }
 
         // BIO/SIN/Contacts
-        //TODO Make import tickable
-        if(c.contacts && c.contacts.contact) {
-          let contacts = getArray(c.contacts.contact);
-          contacts.forEach(ctc => {
-            let data = {};
-            data.type = ctc.contacttype || "";
-            data.connection = ctc.connection || 1;
-            data.loyalty = ctc.loyalty || 1;
-            data.description = { value : describeContact(ctc) };
-            const itemData = { name: ctc.name, type: 'contact', data: data};
-            items.push(itemData);
-          })
+        if(bio) {
+          // Import contacts
+          if (c.contacts && c.contacts.contact) {
+            let contacts = getArray(c.contacts.contact);
+            contacts.forEach(ctc => {
+              let data = {};
+              data.type = ctc.contacttype || "";
+              data.connection = ctc.connection || 1;
+              data.loyalty = ctc.loyalty || 1;
+              data.description = {value: describeContact(ctc)};
+              const itemData = {name: ctc.name, type: 'contact', data: data};
+              items.push(itemData);
+            })
+          }
+          // TODO SINs & Lifestyles
         }
-        // TODO SINs & Lifestyles
 
       }
       await this.object.update(updateData);
