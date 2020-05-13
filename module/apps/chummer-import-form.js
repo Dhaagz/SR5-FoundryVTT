@@ -598,8 +598,8 @@ export class ChummerImportForm extends FormApplication {
             if (p.description) data.description = {
               value: TextEditor.enrichHTML(p.description)
             };
-            data.level = parseInt(p.rating);
-            p.pp = parseInt(p.totalpoints);
+            data.level = parseInt(p.rating.replace(/,/, "."));
+            data.pp = parseFloat(p.totalpoints.replace(/,/, "."));
 
             const itemData = { name: p.name, type: 'adept_power', data: data };
             items.push(itemData);
