@@ -102,6 +102,10 @@ export class ChummerImportForm extends FormApplication {
      * @returns {string}
      */
     function describeCyberware(cy){
+      const getArray = (value) => {
+        return Array.isArray(value) ? value : [value];
+      };
+
       let desc = "";
       // Print left/right location if available
       let location = cy.location;
@@ -119,18 +123,20 @@ export class ChummerImportForm extends FormApplication {
       }
       if(cy.children && cy.children.cyberware) {
         desc += "<ul>";
-        cy.children.cyberware.forEach(c => {
-          if(c.name) {
-            desc += `<li>${c.name}`;
-            if(c.rating && c.rating > 0){
-              desc += ` (Indice ${c.rating})`;
+        let cyberwareArray = getArray(cy.children.cyberware);
+        cyberwareArray.forEach(c => {
+            if (c.name) {
+              desc += `<li>${c.name}`;
+              if (c.rating && c.rating > 0) {
+                desc += ` (Indice ${c.rating})`;
+              }
+              if (c.extra) {
+                desc += ` - ${c.extra}`
+              }
+              desc += "</li>";
             }
-            if(c.extra) {
-              desc += ` - ${c.extra}`
-            }
-            desc += "</li>";
-          }
-        });
+          });
+
         desc += "</ul>";
       }
 
