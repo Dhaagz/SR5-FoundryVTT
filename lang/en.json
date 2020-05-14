@@ -32,6 +32,7 @@
   "SR5.Wounds": "Wounds",
 
   "SR5.Movement": "Movement",
+  "SR5.Overflow": "Overflow",
   "SR5.Nuyen": "Nuyen",
   "SR5.Equipped": "Equipped",
 
@@ -83,6 +84,7 @@
   "SR5.AwakenedEmerged": "Awakened/Emerged",
 
   "SR5.Value": "Value",
+  "SR5.BaseValue": "Base Value",
 
   "SR5.Rating": "Rating",
   "SR5.Cost": "Cost",
@@ -328,7 +330,20 @@
   "SR5.InitCatAstral": "Astral",
   "SR5.InitCatMatrix": "Matrix",
 
+  "SR5.CyberwareGrade": "Grade",
+  "SR5.CyberwareGradeStandard": "Standard",
+  "SR5.CyberwareGradeAlpha": "Alphaware",
+  "SR5.CyberwareGradeBeta": "Betaware",
+  "SR5.CyberwareGradeDelta": "Deltaware",
+  "SR5.CyberwareGradeUsed": "Used",
+
+  "SR5.Capacity": "Capacity",
+
   "SETTINGS.DiagonalMovementName": "Diagonal Movement",
+  "SETTINGS.DiagonalMovementDescription": "How should diagonal movement be handled when using a grid",
   "SETTINGS.IgnoreDiagonal": "Ignore Diagonal Movement (1-1-1)",
-  "SETTINGS.EstimateDiagonal": "Estimate Diagonal Movement (1-2-1)"
+  "SETTINGS.EstimateDiagonal": "Estimate Diagonal Movement (1-2-1)",
+
+  "SETTINGS.ApplyLimitsName": "Apply Limits to Rolls",
+  "SETTINGS.ApplyLimitsDescription": "Should limits be applied to roll"
 }

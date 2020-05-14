@@ -11,6 +11,7 @@ import { DiceSR } from './module/dice.js';
 import { preCombatUpdate, shadowrunCombatUpdate } from './module/combat.js';
 import { measureDistance } from './module/canvas.js';
 import * as chat from './module/chat.js';
+import * as migrations from './module/migration.js';
 
 /* -------------------------------------------- */
 /*  Foundry VTT Initialization                  */
@@ -19,7 +20,7 @@ import * as chat from './module/chat.js';
 Hooks.once("init", function() {
   console.log("Loading Shadowrun 5e [FR] System");
 
-  // Create a D&D5E namespace within the game global
+  // Create a shadowrun5e namespace within the game global
   game.shadowrun5e_fr = {
     SR5Actor,
     DiceSR,
@@ -52,7 +53,7 @@ Hooks.on('canvasInit', function() {
   SquareGrid.prototype.measureDistance = measureDistance;
 });
 
-Hooks.on('ready', () => {
+Hooks.on('ready', function() {
   game.socket.on("system.shadowrun5e_fr", data => {
     if (game.user.isGM && data.gmCombatUpdate) {
       shadowrunCombatUpdate(
@@ -62,6 +63,18 @@ Hooks.on('ready', () => {
     }
     console.log(data)
   });
+
+  // Determine whether a system migration is required and feasible
+  const currentVersion = game.settings.get("shadowrun5e_fr", "systemMigrationVersion");
+  // the latest version that requires migration
+  const NEEDS_MIGRATION_VERSION = "0.5.7";
+  let needMigration = (currentVersion === null) || (compareVersion(currentVersion, NEEDS_MIGRATION_VERSION) < 0);
+
+  // Perform the migration
+  if ( needMigration && game.user.isGM ) {
+    migrations.migrateWorld();
+  }
+
 });
 
 Hooks.on('preUpdateCombat', preCombatUpdate);
@@ -80,6 +93,22 @@ Hooks.on("hotbarDrop", (bar, data, slot) => {
   createItemMacro(data.data, slot);
   return false;
 });
+
+// found at: https://helloacm.com/the-javascript-function-to-compare-version-number-strings/
+function compareVersion(v1, v2) {
+  if (typeof v1 !== 'string') return false;
+  if (typeof v2 !== 'string') return false;
+  v1 = v1.split('.');
+  v2 = v2.split('.');
+  const k = Math.min(v1.length, v2.length);
+  for (let i = 0; i < k; ++ i) {
+    v1[i] = parseInt(v1[i], 10);
+    v2[i] = parseInt(v2[i], 10);
+    if (v1[i] > v2[i]) return 1;
+    if (v1[i] < v2[i]) return -1;
+  }
+  return v1.length === v2.length ? 0: (v1.length < v2.length ? -1 : 1);
+}
 
 /**
  * Create a Macro from an Item drop.
@@ -135,6 +164,11 @@ Handlebars.registerHelper("concat", function(strs, c = ",") {
     return strs.join(c);
   }
   return strs;
+});
+Handlebars.registerHelper("hasprop", function(obj, prop, options) {
+  if(obj.hasOwnProperty(prop)) {
+    return options.fn(this);
+  } else return options.inverse(this);
 });
 Handlebars.registerHelper("ifin", function(val, arr, options) {
   if (arr.includes(val)) return options.fn(this);

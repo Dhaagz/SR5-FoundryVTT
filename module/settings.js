@@ -8,8 +8,8 @@ export const registerSystemSettings = () => {
         name: "System Migration Version",
         scope: "world",
         config: false,
-        type: Number,
-        default: 0 // TODO change this to most recent version?
+        type: String,
+        default: "",
     });
 
     /**
@@ -17,7 +17,7 @@ export const registerSystemSettings = () => {
      */
     game.settings.register("shadowrun5e_fr", "diagonalMovement", {
         name: "SETTINGS.DiagonalMovementName",
-        description: "SETTINGS.DiagonalMovementDescription",
+        hint: "SETTINGS.DiagonalMovementDescription",
         scope: "world",
         config: true,
         type: String,
@@ -34,7 +34,7 @@ export const registerSystemSettings = () => {
      */
     game.settings.register("shadowrun5e_fr", "applyLimits", {
         name: "SETTINGS.ApplyLimitsName",
-        description: "SETTINGS.ApplyLimitsDescription",
+        hint: "SETTINGS.ApplyLimitsDescription",
         scope: "world",
         config: true,
         type: Boolean,

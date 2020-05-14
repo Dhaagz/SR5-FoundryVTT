@@ -1,6 +1,9 @@
-import { SR5 } from '../config.js';
-import { Helpers } from '../helpers.js';
-import { ChummerImportForm } from '../apps/chummer-import-form.js';
+import {Helpers} from '../helpers.js';
+import {ChummerImportForm} from '../apps/chummer-import-form.js';
+import {SkillEditForm} from '../apps/skill-edit.js';
+import {KnowledgeSkillEditForm} from "../apps/knowledge-skill-edit.js";
+import {LanguageSkillEditForm} from "../apps/language-skill-edit.js";
+
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -17,8 +20,11 @@ export class SR5ActorSheet extends ActorSheet {
      * Keep track of the currently active sheet tab
      * @type {string}
      */
-    this._shownUntrainedSkills = [];
+    this._shownUntrainedSkills = true;
     this._shownDesc = [];
+    this._filters = {
+      skills: ''
+    };
   }
 
   /* -------------------------------------------- */
@@ -29,10 +35,10 @@ export class SR5ActorSheet extends ActorSheet {
    */
 	static get defaultOptions() {
 	  return mergeObject(super.defaultOptions, {
-  	  classes: ["sr5", "sheet", "actor"],
+        classes: ["sr5", "sheet", "actor"],
   	  template: "systems/shadowrun5e_fr/templates/actor/character.html",
-      width: 800,
-      height: 690,
+        width: 880,
+        height: 690,
         tabs: [{navSelector: '.tabs', contentSelector: '.sheetbody', initial: 'skills'}]
     });
   }
@@ -87,21 +93,44 @@ export class SR5ActorSheet extends ActorSheet {
     data.awakened = data.data.special === 'magic';
     data.emerged = data.data.special === 'resonance';
 
+    data.filters = this._filters;
     data.chummerimport_lang = data.data.chummerimport_lang;
     console.log("Chummer import language : " + data.chummerimport_lang);
 
     return data;
   }
 
-  _prepareSkills(data) {
-    let remove = [];
-    for (let [key, skill] of Object.entries(data.data.skills.active)) {
-      skill.css = skill.value > 0 ? '' : 'hidden';
-      if (key === 'magic' && data.data.special !== 'magic') remove.push(key);
-      if (key === 'resonance' && data.data.special !== 'resonance') remove.push(key);
+  _isSkillMagic(id, skill) {
+    return skill.attribute === 'magic'
+            || id === 'astral_combat'
+            || id === 'assensing';
+  }
+
+  _doesSkillContainText(key, skill, text) {
+    if(!skill.specs){
+      skill.specs = "";
     }
-    remove.forEach(key => delete data.data.skills.active[key]);
-    Helpers.orderKeys(data.data.skills.active);
+    let searchString = `${key} ${game.i18n.localize(skill.label)} ${skill.specs.join(' ')}`;
+    return searchString.toLowerCase().search(text.toLowerCase()) > -1;
+  }
+
+  _prepareSkills(data) {
+    const activeSkills = {};
+    for (let [key, skill] of Object.entries(data.data.skills.active)) {
+      // if filter isn't empty, we are doing custom filtering
+      if (this._filters.skills !== '') {
+        if (this._doesSkillContainText(key, skill, this._filters.skills)) {
+          activeSkills[key] = skill;
+        }
+        // general check if we aren't filtering
+      } else if ((skill.value > 0 || this._shownUntrainedSkills)
+          && !(this._isSkillMagic(key, skill) && data.data.special !== 'magic')
+          && !(skill.attribute === 'resonance' && data.data.special !== 'resonance')) {
+        activeSkills[key] = skill;
+      }
+    }
+    Helpers.orderKeys(activeSkills);
+    data.data.skills.active = activeSkills;
   }
 
   _prepareItems(data) {
@@ -243,30 +272,12 @@ export class SR5ActorSheet extends ActorSheet {
   activateListeners(html) {
     super.activateListeners(html);
 
-    // Activate tabs
-    // let tabs = html.find('.tabs').filter('nav[data-group=primary]');
-    // let initial = this._sheetTab;
-    // new Tabs(tabs, {
-    //   initial: initial,
-    //   callback: clicked => this._sheetTab = clicked.data("tab")
-    // });
-
     html.find('.hidden').hide();
-    this._shownUntrainedSkills.forEach(cat => {
-      const field = $(`[data-category='${cat}']`);
-      field.siblings('.item.hidden').show();
-    });
 
     html.find('.skill-header').click(event => {
       event.preventDefault();
-      const category = event.currentTarget.dataset.category;
-      let field = $(event.currentTarget).siblings('.item.hidden');
-      if (field.length === 0) {
-        field = $(event.currentTarget).siblings('.scroll-area').find('.item.hidden');
-      }
-      field.toggle();
-      if (field.is(':visible')) this._shownUntrainedSkills.push(category);
-      else this._shownUntrainedSkills = this._shownUntrainedSkills.filter(val => val !== category);
+      this._shownUntrainedSkills = !this._shownUntrainedSkills;
+      this._render(true);
     });
 
     html.find('.has-desc').click(event => {
@@ -281,6 +292,7 @@ export class SR5ActorSheet extends ActorSheet {
       }
     });
 
+    html.find('#filter-skills').on('input', this._onFilterSkills.bind(this));
     html.find('.track-roll').click(this._onRollTrack.bind(this));
     html.find('.attribute-roll').click(this._onRollAttribute.bind(this));
     html.find('.skill-roll').click(this._onRollActiveSkill.bind(this));
@@ -305,6 +317,9 @@ export class SR5ActorSheet extends ActorSheet {
     html.find('.remove-language').click(this._onRemoveLanguageSkill.bind(this));
     html.find('.import-character').click(this._onShowImportCharacter.bind(this));
     html.find('.reload-ammo').click(this._onReloadAmmo.bind(this));
+    html.find('.skill-edit').click(this._onShowEditSkill.bind(this));
+    html.find('.knowledge-skill-edit').click(this._onShowEditKnowledgeSkill.bind(this));
+    html.find('.language-skill-edit').click(this._onShowEditLanguageSkill.bind(this));
     html.find('.matrix-att-selector').change(event => {
       let iid = this.data.matrix.device;
       let item = this.actor.getOwnedItem(iid);
@@ -361,6 +376,11 @@ export class SR5ActorSheet extends ActorSheet {
     });
   }
 
+  async _onFilterSkills(event) {
+    this._filters.skills = event.currentTarget.value;
+    this._render();
+  }
+
   async _onReloadAmmo(event) {
     event.preventDefault();
     const iid = event.currentTarget.closest('.item').dataset.itemId;
@@ -383,36 +403,30 @@ export class SR5ActorSheet extends ActorSheet {
 
   async _onAddLanguageSkill(event) {
     event.preventDefault();
-    const data = duplicate(this.actor.data);
-    data.data.skills.language.value.push({name: '', specs: '', rating: 0});
-    this.actor.update(data);
+    this.actor.addLanguageSkill({name: ''});
+    //data.data.skills.language.value.push({name: '', specs: '', rating: 0});
   }
 
   async _onRemoveLanguageSkill(event) {
     event.preventDefault();
     const skillId = event.currentTarget.dataset.skill;
-    const data = duplicate(this.actor.data);
-    data.data.skills.language.value.splice(skillId, 1);
-    this.actor.update(data);
+    this.actor.removeLanguageSkill(skillId);
+    //data.data.skills.language.value.splice(skillId, 1);
   }
 
   async _onAddKnowledgeSkill(event) {
     event.preventDefault();
     const category = event.currentTarget.dataset.category;
-    const data = duplicate(this.actor.data);
-    const cat = data.data.skills.knowledge[category];
-    if (cat) cat.value.push({name: '', specs: '', rating: 0});
-    this.actor.update(data);
+    this.actor.addKnowledgeSkill(category);
+    // if (cat) cat.value.push({name: '', specs: '', rating: 0});
   }
 
   async _onRemoveKnowledgeSkill(event) {
     event.preventDefault();
     const skillId = event.currentTarget.dataset.skill;
     const category = event.currentTarget.dataset.category;
-    const data = duplicate(this.actor.data);
-    const cat = data.data.skills.knowledge[category];
-    if (cat) cat.value.splice(skillId, 1);
-    this.actor.update(data);
+    this.actor.removeKnowledgeSkill(skillId, category);
+    // if (cat) cat.value.splice(skillId, 1);
   }
 
   async _onChangeRtg(event) {
@@ -445,7 +459,7 @@ export class SR5ActorSheet extends ActorSheet {
         for (let ite of this.actor.items) {
           if (ite.type === 'device') {
             await ite.update({"data.technology.equipped": false});
-          };
+          }
         }
       }
       await item.update({"data.technology.equipped": !itemData.technology.equipped});
@@ -542,10 +556,19 @@ export class SR5ActorSheet extends ActorSheet {
   /**
    * @private
    */
-  async _render (force = false, options = {}) {
+  async _render (...args) {
+    let focus = this.element.find(':focus');
+    focus = focus.length ? focus[0] : null;
+
     this._saveScrollPositions();
-    await super._render(force, options);
+    await super._render(...args);
     this._restoreScrollPositions();
+
+    if (focus && focus.name) {
+      this.form[focus.name].focus();
+      // set the selection range on the focus formed from before (keeps track of cursor in input)
+      this.form[focus.name].setSelectionRange(focus.selectionStart, focus.selectionEnd);
+    }
   }
 
   /**
@@ -568,16 +591,23 @@ export class SR5ActorSheet extends ActorSheet {
     }
   }
 
-  /* -------------------------------------------- */
+  _onShowEditKnowledgeSkill(event) {
+    event.preventDefault();
+    const skill = event.currentTarget.dataset.skill;
+    const category = event.currentTarget.dataset.category;
+    new KnowledgeSkillEditForm(this.actor, skill, category, {event: event}).render(true);
+  }
 
-  /**
-   * Implement the _updateObject method as required by the parent class spec
-   * This defines how to update the subject of the form when the form is submitted
-   * @private
-   */
-  _updateObject(event, formData) {
-    // Update the Actor
-    return this.object.update(formData);
+  _onShowEditLanguageSkill(event) {
+    event.preventDefault();
+    const skill = event.currentTarget.dataset.skill;
+    new LanguageSkillEditForm(this.actor, skill, {event: event}).render(true);
+  }
+
+  _onShowEditSkill(event) {
+    event.preventDefault();
+    const skill = event.currentTarget.dataset.skill;
+    new SkillEditForm(this.actor, skill, {event: event}).render(true);
   }
 
   _onShowImportCharacter(event) {
