@@ -342,10 +342,30 @@ export class ChummerImportForm extends FormApplication {
               } else if (s.knowledge && s.knowledge.toLowerCase() === "true") {
                 skill = {};
                 if (s.attribute.toLowerCase() === "int") {
-                  update.skills.knowledge.street.value.push(skill);
+                  if(s.skillcategory_english.toLowerCase() === "street") {
+                    if(!Array.isArray(update.skills.knowledge.street.value)){
+                      update.skills.knowledge.street.value = [];
+                    }
+                    update.skills.knowledge.street.value.push(skill);
+                  } else {
+                    if(!Array.isArray(update.skills.knowledge.interests.value)){
+                      update.skills.knowledge.interests.value = [];
+                    }
+                    update.skills.knowledge.interests.value.push(skill);
+                  }
                 }
                 if (s.attribute.toLowerCase() === "log") {
-                  update.skills.knowledge.professional.value.push(skill);
+                  if(s.skillcategory_english.toLowerCase() === "professional") {
+                    if(!Array.isArray(update.skills.knowledge.professional.value)){
+                      update.skills.knowledge.professional.value = [];
+                    }
+                    update.skills.knowledge.professional.value.push(skill);
+                  } else {
+                    if(!Array.isArray(update.skills.knowledge.academic.value)){
+                      update.skills.knowledge.academic.value = [];
+                    }
+                    update.skills.knowledge.academic.value.push(skill);
+                  }
                 }
                 group = "knowledge";
               } else {
