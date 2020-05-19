@@ -108,7 +108,7 @@ export class SR5ActorSheet extends ActorSheet {
 
   _doesSkillContainText(key, skill, text) {
     if(!skill.specs){
-      skill.specs = "";
+      skill.specs = [];
     }
     let searchString = `${key} ${game.i18n.localize(skill.label)} ${skill.specs.join(' ')}`;
     return searchString.toLowerCase().search(text.toLowerCase()) > -1;
