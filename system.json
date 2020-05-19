@@ -9,7 +9,7 @@
   "scripts": [],
   "styles": ["css/main.css", "css/actor.css", "css/config.css", "css/item.css", "css/chat.css"],
   "minimumCoreVersion": "0.5.2",
-  "compatibleCoreVersion": "0.5.5",
+  "compatibleCoreVersion": "0.5.7",
   "languages": [
     {
       "lang": "fr",

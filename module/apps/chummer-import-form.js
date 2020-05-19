@@ -803,7 +803,7 @@ export class ChummerImportForm extends FormApplication {
               data.connection = ctc.connection || 1;
               data.loyalty = ctc.loyalty || 1;
               data.description = {value: describeContact(ctc)};
-              const itemData = {name: ctc.name, type: 'contact', data: data};
+              const itemData = {name: ctc.name || 'Contact', type: 'contact', data: data};
               items.push(itemData);
             })
           }
