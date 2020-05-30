@@ -19,24 +19,6 @@ export class ChummerImportForm extends FormApplication {
   activateListeners(html) {
 
     /**
-     * Translate item name according to locale if possible
-     * @param item
-     * @returns {{name}|*}
-     */
-    function translateItem(item) {
-      const item_name_eng = item.name;
-
-      const itemNameFormatted = item.name.replace(/-/g, " ").replace(/[\[\]()\/:"\s«»]/g, "_");
-      item.name = game.i18n.localize(`CHUMMER.${item.type}.${itemNameFormatted}`);
-      if (item.name && item.name.includes("CHUMMER")) {
-        // No translation defined, use default name (ENG)
-        item.name = item_name_eng;
-      }
-
-      return item;
-    }
-
-    /**
      * Replace basic imported item with item of the same name in library if present
      * @param item
      * @returns {*}
@@ -354,15 +336,22 @@ export class ChummerImportForm extends FormApplication {
                 }
                 group = "knowledge";
               } else {
-                // FIXME dirty hack to get english skill from translated name
-                // Get key, e.g "SkillBlades"
-                let sr5Translations = game.i18n.translations.SR5;
-                let skillKey = Object.keys(sr5Translations).find(key => sr5Translations[key] === s.name);
-                // Turn it into blades
-                let englishSkillName = skillKey.substring(5).toLowerCase();
-                // Find related key in actor skills (template.json)
-                let actorSkillKey = Object.keys(update.skills.active).find(key => key.replace(/_/sg, "")  === englishSkillName);
-                skill = update.skills.active[actorSkillKey];
+                if(game.i18n.lang !== "en") {
+                  // Hack to get english skill from translated name
+                  // Get key, e.g "SkillBlades"
+                  let sr5Translations = game.i18n.translations.SR5;
+                  let skillKey = Object.keys(sr5Translations).find(key => sr5Translations[key] === s.name);
+                  // Turn it into blades
+                  let englishSkillName = skillKey.substring(5).toLowerCase();
+                  // Find related key in actor skills (template.json)
+                  let actorSkillKey = Object.keys(update.skills.active).find(key => key.replace(/_/sg, "") === englishSkillName);
+                  skill = update.skills.active[actorSkillKey];
+                }
+                else {
+                  let name = s.name.toLowerCase().trim().replace(/\s/g, '_').replace(/-/g, '_');
+                  if (name.includes('exotic') && name.includes('_weapon')) name = name.replace('_weapon', '');
+                  skill = update.skills.active[name];
+                }
               }
               if (!skill) console.error("Couldn't parse skill " + s.name);
               if (skill) {
@@ -501,7 +490,6 @@ export class ChummerImportForm extends FormApplication {
               let itemData = {name: w.name, type: 'weapon', data: data};
               // Attempt to translate item name
               if (game.i18n.lang === "fr") {
-                itemData = translateItem(itemData);
                 itemData = replaceItemWithLibraryItem(itemData);
               }
               items.push(itemData);
