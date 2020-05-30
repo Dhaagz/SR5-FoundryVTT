@@ -357,8 +357,13 @@ export class ChummerImportForm extends FormApplication {
               if (skill) {
                 if (group !== 'active') skill.name = s.name;
                 skill.base = parseInt(s.rating);
-                if (s.skillspecializations) {
-                  skill.specs = getArray(s.skillspecializations.skillspecialization.name);
+                if (s.skillspecializations || s.spec) {
+                  let specName = s.skillspecializations?.skillspecialization?.name;
+                  if(!specName && s.spec){
+                    // Exotic weapons have no skillspecializations, use "spec" field instead
+                    specName = s.spec;
+                  }
+                  skill.specs = getArray(specName);
                 }
               }
             }
