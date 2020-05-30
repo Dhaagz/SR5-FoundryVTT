@@ -282,6 +282,11 @@ export class ChummerImportForm extends FormApplication {
             const newAtt = parseAtt(att.name_english);
             if (newAtt){
               update.attributes[newAtt].base = parseInt(att.total);
+              if(newAtt === "edge"){
+                // Import with full edge pool
+                update.attributes[newAtt].value = parseInt(att.total);
+                update.attributes[newAtt].max = parseInt(att.total);
+              }
             }
 
           } catch (e) {
