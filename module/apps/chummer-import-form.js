@@ -26,7 +26,7 @@ export class ChummerImportForm extends FormApplication {
     function translateItem(item) {
       const item_name_eng = item.name;
 
-      const itemNameFormatted = item.name.replace(/-/g, " ").replace(/[\[\]()\/:"\s«»]/g, "_");
+      const itemNameFormatted = item.name.replace(/-/g, " ").replace(/[\[\]()\/:"\sÂ«Â»]/g, "_");
       item.name = game.i18n.localize(`CHUMMER.${item.type}.${itemNameFormatted}`);
       if (item.name && item.name.includes("CHUMMER")) {
         // No translation defined, use default name (ENG)
@@ -74,19 +74,19 @@ export class ChummerImportForm extends FormApplication {
         desc += `<li><b>Sexe</b> : ${sex}</li>`;
       }
       if(role){
-        desc += `<li><b>Rôle</b> : ${role}</li>`;
+        desc += `<li><b>RÃ´le</b> : ${role}</li>`;
       }
       if(metatype){
-        desc += `<li><b>Métatype</b> : ${metatype}</li>`;
+        desc += `<li><b>MÃ©tatype</b> : ${metatype}</li>`;
       }
       if(age){
-        desc += `<li><b>Âge</b> : ${age}</li>`;
+        desc += `<li><b>Ã¢ge</b> : ${age}</li>`;
       }
       if(personalLife){
         desc += `<li><b>Vie Perso</b> : ${personalLife}</li>`;
       }
       if(preferredPayment){
-        desc += `<li><b>Mode de paiement préféré</b> : ${preferredPayment}</li>`;
+        desc += `<li><b>Mode de paiement prÃ©fÃ©rÃ©</b> : ${preferredPayment}</li>`;
       }
       if(hobbiesVice){
         desc += `<li><b>Vice/Hobbies</b> : ${hobbiesVice}</li>`;
@@ -342,7 +342,7 @@ export class ChummerImportForm extends FormApplication {
                   if (cat === 'street') skillCategory = update.skills.knowledge.street.value;
                   if (cat === 'academic') skillCategory = update.skills.knowledge.academic.value;
                   if (cat === 'professional') skillCategory = update.skills.knowledge.professional.value;
-                  if (cat === 'interests') skillCategory = update.skills.knowledge.interests.value;
+                  if (cat === 'interest') skillCategory = update.skills.knowledge.interests.value;
                   if (skillCategory) skillCategory[id] = skill;
                 } else {
                   if (s.attribute.toLowerCase() === "int") {
