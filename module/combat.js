@@ -42,8 +42,8 @@ export const shadowrunCombatUpdate = async (changes, options) => {
       });
     }
   }
-  await combat.deleteManyEmbeddedEntities('Combatant', removedCombatants.map(c => c._id), {});
-  await combat.updateManyEmbeddedEntities('Combatant', combatants, {});
+  await combat.deleteEmbeddedEntity('Combatant', removedCombatants.map(c => c._id), {});
+  await combat.updateEmbeddedEntity('Combatant', combatants, {});
   if (combatants.length === 0) {
     const messages = [];
     const messageOptions = options.messageOptions || {};
@@ -65,7 +65,7 @@ export const shadowrunCombatUpdate = async (changes, options) => {
           token: c.token._id,
           alias: c.token.name
         },
-        flavor: `${c.token.name} rolls for Initative!`
+        flavor: `${c.token.name} rolls for Initiative!`
       }, messageOptions);
       const chatData = roll.toMessage(messageData, {rollMode, create: false});
       // only make the sound once
@@ -73,13 +73,14 @@ export const shadowrunCombatUpdate = async (changes, options) => {
       else chatData.sound = null;
       messages.push(chatData);
     }
-    await combat.createManyEmbeddedEntities('Combatant', removedCombatants, {});
-    await ChatMessage.createMany(messages);
+    await combat.createEmbeddedEntity('Combatant', removedCombatants, {});
+    await ChatMessage.create(messages);
     await combat.unsetFlag('shadowrun5e_fr', 'removedCombatants');
     await combat.resetAll();
     await combat.rollAll();
     await combat.update({turn: 0});
   } else if (removedCombatants.length) {
     await combat.setFlag('shadowrun5e_fr', 'removedCombatants', removedCombatants);
+    await combat.update({turn: 0});
   }
 };

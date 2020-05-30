@@ -107,10 +107,7 @@ export class SR5ActorSheet extends ActorSheet {
   }
 
   _doesSkillContainText(key, skill, text) {
-    if(!skill.specs){
-      skill.specs = [];
-    }
-    let searchString = `${key} ${game.i18n.localize(skill.label)} ${skill.specs.join(' ')}`;
+    let searchString = `${key} ${game.i18n.localize(skill.label)} ${skill?.specs?.join(' ')}`;
     return searchString.toLowerCase().search(text.toLowerCase()) > -1;
   }
 
@@ -565,9 +562,12 @@ export class SR5ActorSheet extends ActorSheet {
     this._restoreScrollPositions();
 
     if (focus && focus.name) {
-      this.form[focus.name].focus();
-      // set the selection range on the focus formed from before (keeps track of cursor in input)
-      this.form[focus.name].setSelectionRange(focus.selectionStart, focus.selectionEnd);
+      const element = this.form[focus.name];
+      if (element) {
+        element.focus();
+        // set the selection range on the focus formed from before (keeps track of cursor in input)
+        element.setSelectionRange && element.setSelectionRange(focus.selectionStart, focus.selectionEnd);
+      }
     }
   }
 

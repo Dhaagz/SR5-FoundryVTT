@@ -2,19 +2,29 @@
   "name": "shadowrun5e_fr",
   "title": "Shadowrun 5th Edition [FR]",
   "description": "Shadowrun 5th Edition game [FR]",
-  "version": "0.5.7",
+  "version": "0.5.10",
   "templateVersion": "1.2",
   "author": "Shawn Milligan [n3rf_herder#9026]/Dhaagz",
   "esmodules": ["shadowrun5e_fr.js"],
   "scripts": [],
   "styles": ["css/main.css", "css/actor.css", "css/config.css", "css/item.css", "css/chat.css"],
-  "minimumCoreVersion": "0.5.2",
-  "compatibleCoreVersion": "0.5.7",
+  "minimumCoreVersion": "0.6.0",
+  "compatibleCoreVersion": "0.6.0",
   "languages": [
     {
       "lang": "fr",
       "name": "French",
       "path": "lang/fr.json"
+    },
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    },
+    {
+      "lang": "de",
+      "name": "Deutsch",
+      "path": "lang/de.json"
     }
   ],
   "packs": [],

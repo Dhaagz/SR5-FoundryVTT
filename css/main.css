@@ -431,6 +431,19 @@ label.checkbox .checkmark {
   left: 0.8em;
 }
 
+button.plus1_button {
+  padding: 2px;
+  color: black;
+  line-height: 0;
+  flex: 0;
+  background: rgba(230, 230, 230, 0.1);
+  border-radius: 0.3em;
+  text-align: center;
+}
+button.plus1_button:hover {
+  cursor: pointer;
+}
+
 button.display {
   color: white;
   border-color: black;
@@ -502,6 +515,15 @@ select.display > option {
   background-color: #4d4d4d;
 }
 
+.sr5.roll-dialog .parts-list {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-items: center;
+}
+.sr5.roll-dialog .parts-list > * {
+  margin: 0 0.5em;
+}
 .sr5 .window-content {
   font-size: 115%;
   background: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url("../ui/brushed_metal.jpg") repeat;
